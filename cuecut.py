@@ -57,7 +57,6 @@ class CueCut:
 
     @staticmethod
     def vaildname(name):
-        name = str(name)
         if name in RESERVED_NAME:
             print('Unable to resloving name issue: It`s a reserved name %s' %
                   name)
@@ -84,10 +83,13 @@ class CueCut:
         return CueCut.offset(start) + delta.seconds + delta.microseconds * 1e-6
 
     def _output(self, trackidx):
+        performer = self.cuesheet.tracks[trackidx].performer
+        title = self.cuesheet.tracks[trackidx].title
         return join(
             dirname(self.filepath),
             '.'.join([
-                self.vaildname(self.cuesheet.tracks[trackidx]),
+                self.vaildname(' - '.join(
+                    filter(lambda x: x is not None, [performer, title]))),
                 self.prefer_codec
             ]),
         )
