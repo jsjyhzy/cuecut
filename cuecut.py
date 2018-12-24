@@ -1,3 +1,4 @@
+import argparse
 from os import name as _platform
 from os import stat, utime
 from os.path import dirname, isfile, join
@@ -18,6 +19,11 @@ RESERVED_NAME = {
 } if _platform == 'nt' else {}
 
 
+def bytes2str(bytesstring):
+    codec = detect(bytesstring)['encoding']
+    return str(bytesstring, encoding=codec)
+
+
 class CueCut:
     def __init__(self,
                  cuepath,
@@ -26,12 +32,10 @@ class CueCut:
                  ffmpeg_bin='ffmpeg'):
         self.prefer_codec = prefer_codec
         self.ffmpeg_bin = ffmpeg_bin
-        with open(cuepath, 'rb') as fp:
-            codec = detect(fp.read())['encoding']
 
-        with open(cuepath, encoding=codec) as fp:
+        with open(cuepath, 'rb') as fp:
             self.cuesheet = CueSheet()
-            self.cuesheet.setData(fp.read())
+            self.cuesheet.setData(bytes2str(fp.read()))
             self.cuesheet.setOutputFormat(
                 '%performer% - %title%\n%file%\n%tracks%',
                 '%performer% - %title%',
@@ -144,10 +148,42 @@ class CueCut:
         run(commandline, check=True, stderr=PIPE)
         utime(output, self.amtime)
         return 0
-        else:
-            raise RuntimeError(ret)
+
+
+def entrypoint():
+    parser = argparse.ArgumentParser(
+        description='Cut your CD Image into slices.')
+    parser.add_argument(
+        'cuepath',
+        metavar='CUEFILE',
+        type=str,
+        help='Cue file path',
+    )
+    parser.add_argument(
+        '-c',
+        dest='codec',
+        action='store',
+        default='flac',
+        help='Preferred audio codec (Default: flac)',
+    )
+    parser.add_argument(
+        '-f',
+        dest='AUDIOFILE',
+        action='store',
+        default=None,
+        help='Audio file overriding that defined in cue file (Default: None)',
+    )
+
+    args = parser.parse_args()
+    try:
+        CueCut(args.cuepath, prefer_codec=args.codec).cut()
+    except FileNotFoundError:
+        print('Can not find %s.' % args.cuepath)
+    except KeyboardInterrupt:
+        print('User interupted.')
+    except CalledProcessError as err:
+        print('FFmpeg reporting an error: ', bytes2str(err.stderr))
 
 
 if __name__ == "__main__":
-    from sys import argv
-    CueCut(argv[1]).cut()
+    entrypoint()
