@@ -1,7 +1,7 @@
 from os import name as _platform
 from os import stat, utime
 from os.path import dirname, isfile, join
-from subprocess import run
+from subprocess import PIPE, CalledProcessError, run
 
 from chardet import detect
 from cueparser import CueSheet
@@ -116,7 +116,7 @@ class CueCut:
             '-to',  # To where
             '%.2f' % self.time_plus_deltatime(track.offset, track.duration),
             '-loglevel',  # Disable massive log record
-            'panic',
+            'fatal',
             '-metadata',  # def: Metas
             'title=%s' % track.title,
             '-metadata',
@@ -141,10 +141,9 @@ class CueCut:
             # which leads to loss of the duration of output
             output,  # def: Output Stream
         ]
-        ret = run(commandline)
-        if ret.returncode == 0:
-            utime(output, self.amtime)
-            return 0
+        run(commandline, check=True, stderr=PIPE)
+        utime(output, self.amtime)
+        return 0
         else:
             raise RuntimeError(ret)
 
