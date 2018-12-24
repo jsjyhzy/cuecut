@@ -2,14 +2,20 @@
 
 Cut a CD image file by its cue file.
 
+## Installation
+
+```bash
+pip install cuecut
+```
+
 ## Usage
 
-### Prerequisite
+### 1. Prerequisite
 
 There should exists an executable `ffmpeg` in `PATH`,
 and the minimal Python/FFmpeg version that has been tested is 3.6.6/4.1 .
 
-### Folder Struct
+### 2. Folder Struct
 
 ```
 .
@@ -19,6 +25,8 @@ and the minimal Python/FFmpeg version that has been tested is 3.6.6/4.1 .
 
 Where `yyy.zzz` is the name defined in `xxx.cue`
 
-### Cut it
+### 3. Cut it
 
-`python cuecut.py /path/to/xxx.cue`
+```bash
+cuecut /path/to/xxx.cue -c CodecYouLike
+```
