@@ -177,10 +177,20 @@ def entrypoint():
         default=None,
         help='Audio file overriding that defined in cue file (Default: None)',
     )
+    parser.add_argument(
+        '--encoding',
+        dest='encoding',
+        action='store',
+        default=None,
+    )
 
     args = parser.parse_args()
     try:
-        CueCut(args.cuepath, prefer_codec=args.codec).cut()
+        CueCut(
+            args.cuepath,
+            prefer_codec=args.codec,
+            encoding=args.encoding,
+        ).cut()
     except FileNotFoundError:
         print('Can not find %s.' % args.cuepath)
     except KeyboardInterrupt:
