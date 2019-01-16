@@ -29,13 +29,17 @@ class CueCut:
                  cuepath,
                  filepath=None,
                  prefer_codec='flac',
-                 ffmpeg_bin='ffmpeg'):
+                 ffmpeg_bin='ffmpeg',
+                 encoding=None):
         self.prefer_codec = prefer_codec
         self.ffmpeg_bin = ffmpeg_bin
 
         with open(cuepath, 'rb') as fp:
             self.cuesheet = CueSheet()
-            self.cuesheet.setData(bytes2str(fp.read()))
+            if encoding is None:
+                self.cuesheet.setData(bytes2str(fp.read()))
+            else:
+                self.cuesheet.setData(fp.read().decode(encoding))
             self.cuesheet.setOutputFormat(
                 '%performer% - %title%\n%file%\n%tracks%',
                 '%performer% - %title%',
