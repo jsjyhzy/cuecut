@@ -1,11 +1,11 @@
 from setuptools import setup
 
-with open('README.md') as fp:
+with open('README.md',encoding='utf8') as fp:
     long_description = fp.read()
 
 setup(
     name='cuecut',
-    version='1.0.2',
+    version='1.0.3',
     description='Cut a CD image file by its cue file',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -14,7 +14,7 @@ setup(
     url='https://github.com/jsjyhzy/cuecut',
     license='MIT',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3 :: Only',
